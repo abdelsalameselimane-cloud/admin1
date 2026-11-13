@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://*.supabase.co wss://*.supabase.co; base-uri 'none'; form-action 'none'">
+<title>لوحة الإدارة</title>
+<style>
+:root{--ink:#1b2430;--muted:#5d6b7a;--line:#d9dee4;--bg:#f2f4f6;--card:#fff;--accent:#0b5d57;--accent-ink:#fff;--danger:#b3261e}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:grid;place-items:center;padding:1.25rem;background:var(--bg);color:var(--ink);font-family:"Segoe UI",Tahoma,system-ui,sans-serif;line-height:1.7}
+main{width:100%;max-width:26rem;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:2rem}
+h1{margin:0 0 .5rem;font-size:1.35rem}
+p{margin:0 0 1rem;color:var(--muted)}
+label{display:block;margin:1rem 0 .25rem;font-weight:600;font-size:.95rem}
+input,select,textarea{width:100%;padding:.7rem .8rem;border:1px solid var(--line);border-radius:6px;font:inherit;background:#fff;color:var(--ink)}
+input:focus-visible,button:focus-visible{outline:3px solid #7fb8b2;outline-offset:1px}
+input.code{text-align:center;letter-spacing:.5em;font-size:1.4rem;direction:ltr}
+button{width:100%;margin-top:1.25rem;padding:.75rem;border:0;border-radius:6px;background:var(--accent);color:var(--accent-ink);font:inherit;font-weight:600;cursor:pointer}
+button:disabled{opacity:.6;cursor:wait}
+button.ghost{background:transparent;color:var(--accent);border:1px solid var(--line)}
+.err{min-height:1.5rem;margin:.75rem 0 0;color:var(--danger);font-size:.92rem}
+.qr{display:block;margin:1rem auto;width:12rem;height:12rem;border:1px solid var(--line);border-radius:6px;padding:.4rem;background:#fff}
+.secret{display:block;direction:ltr;text-align:center;word-break:break-all;background:var(--bg);border-radius:6px;padding:.5rem;font-family:ui-monospace,Consolas,monospace;font-size:.85rem;user-select:all}
+dl{margin:1rem 0 0;display:grid;grid-template-columns:auto 1fr;gap:.35rem 1rem}
+dt{color:var(--muted)}dd{margin:0}
+
+body.in{display:block;padding:0}
+.shell{display:grid;grid-template-columns:14rem 1fr;min-height:100vh}
+.shell[hidden]{display:none}
+aside{background:#17212b;color:#e8edf2;padding:1.25rem 1rem;display:flex;flex-direction:column;gap:1rem;position:sticky;top:0;height:100vh}
+.brand{font-weight:700;font-size:1.1rem}
+nav{display:flex;flex-direction:column;gap:.25rem;flex:1}
+nav a{color:#cfd8e1;text-decoration:none;padding:.6rem .75rem;border-radius:6px}
+nav a[aria-current],nav a:hover{background:#26343f;color:#fff}
+.who{font-size:.85rem;display:flex;flex-direction:column;gap:.15rem}
+.who small{color:#9fb0bf;overflow-wrap:anywhere}
+.who button{color:#e8edf2;border-color:#3a4a57}
+#page{padding:1.5rem;max-width:70rem;width:100%}
+@media(max-width:760px){.shell{grid-template-columns:1fr}aside{position:static;height:auto}nav{flex-direction:row;flex-wrap:wrap;flex:none}.who button{width:auto;padding:.4rem .8rem}}
+h2{font-size:1.1rem;margin:0}
+.head{display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;margin:0 0 .75rem}
+.head h1{margin:0}
+.btn{width:auto;margin:0;padding:.45rem .9rem;border:1px solid var(--line);border-radius:6px;background:#fff;color:var(--ink);font:inherit;font-weight:500;cursor:pointer}
+.btn.pri{background:var(--accent);color:#fff;border-color:var(--accent)}
+.acts0{display:inline-flex;gap:.4rem}
+.muted{color:var(--muted)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(11rem,1fr));gap:.75rem}
+.card{background:#fff;border:1px solid var(--line);border-radius:8px;padding:1rem}
+.card b{display:block;font-size:1.5rem;line-height:1.4;overflow-wrap:anywhere}
+.card span{color:var(--muted);font-size:.9rem}
+.filters{display:flex;gap:.75rem;flex-wrap:wrap;margin-bottom:1rem}
+.filters select{width:auto;padding:.5rem .7rem;border:1px solid var(--line);border-radius:6px;font:inherit;background:#fff}
+.tw{overflow-x:auto;background:#fff;border:1px solid var(--line);border-radius:8px;margin-bottom:1.5rem}
+table{width:100%;border-collapse:collapse;font-size:.92rem}
+th,td{padding:.6rem .75rem;text-align:start;border-bottom:1px solid var(--line);white-space:nowrap}
+th{color:var(--muted);font-weight:600;background:#fafbfc}
+.tag{padding:.1rem .55rem;border-radius:99px;font-size:.8rem;background:#e3efed;color:var(--accent)}
+.tag.off{background:#eceff1;color:var(--muted)}
+.toast{position:fixed;inset-block-end:1rem;inset-inline:1rem;margin-inline:auto;width:fit-content;max-width:90vw;background:#17212b;color:#fff;padding:.7rem 1rem;border-radius:8px;z-index:20}
+.toast.bad{background:var(--danger)}
+dialog.modal{border:0;border-radius:10px;padding:1.5rem;width:min(32rem,94vw);max-height:90vh;color:var(--ink)}
+dialog.modal::backdrop{background:#0008}
+dialog.modal h1{margin-bottom:.25rem}
+.modal label.chk{display:flex;gap:.5rem;align-items:center}
+.modal label.chk input{width:auto}
+.modal small{display:block;color:var(--muted);font-weight:400}
+.modal input[type=color]{padding:.2rem;height:2.6rem}
+.acts{display:flex;gap:.5rem;justify-content:flex-end;margin-top:1.25rem}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<main id="main">
+
+<section id="loading"><p>جارٍ التحميل…</p></section>
+
+<section id="login" hidden>
+  <h1>تسجيل دخول الأدمن</h1>
+  <p>ادخل بحساب الأدمن. سيُطلب منك بعدها رمز التحقق.</p>
+  <form id="loginForm" novalidate>
+    <label for="email">البريد الإلكتروني</label>
+    <input id="email" type="email" autocomplete="username" required dir="ltr">
+    <label for="password">كلمة المرور</label>
+    <input id="password" type="password" autocomplete="current-password" required dir="ltr">
+    <button type="submit">تسجيل الدخول</button>
+  </form>
+  <p class="err" id="loginErr" role="alert"></p>
+</section>
+
+<section id="enroll" hidden>
+  <h1>تفعيل التحقق بخطوتين</h1>
+  <p>افتح تطبيق Google Authenticator أو Authy، وامسح الرمز التالي. ثم اكتب الرمز المكوّن من 6 أرقام الذي يظهر في التطبيق.</p>
+  <img id="qr" class="qr" alt="رمز QR لتفعيل التحقق بخطوتين">
+  <p>إن تعذّر المسح، أدخل هذا المفتاح يدوياً في التطبيق:</p>
+  <code id="secret" class="secret"></code>
+  <form id="enrollForm" novalidate>
+    <label for="enrollCode">رمز التحقق</label>
+    <input id="enrollCode" class="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" required>
+    <button type="submit">تفعيل ومتابعة</button>
+  </form>
+  <p class="err" id="enrollErr" role="alert"></p>
+  <button type="button" class="ghost" data-logout>إلغاء وتسجيل الخروج</button>
+</section>
+
+<section id="verify" hidden>
+  <h1>رمز التحقق</h1>
+  <p>اكتب الرمز المكوّن من 6 أرقام من تطبيق المصادقة.</p>
+  <form id="verifyForm" novalidate>
+    <label for="verifyCode">رمز التحقق</label>
+    <input id="verifyCode" class="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" required>
+    <button type="submit">تأكيد</button>
+  </form>
+  <p class="err" id="verifyErr" role="alert"></p>
+  <button type="button" class="ghost" data-logout>تسجيل الخروج</button>
+</section>
+
+</main>
+<div id="dash" class="shell" hidden>
+  <aside>
+    <div class="brand">لوحة الإدارة</div>
+    <nav id="nav" aria-label="التنقل">
+      <a href="#/home">الرئيسية</a>
+      <a href="#/sites">المواقع</a>
+      <a href="#/plans">الباقات</a>
+    </nav>
+    <div class="who">
+      <span id="dName"></span>
+      <small id="dEmail" dir="ltr"></small>
+      <small id="dRole"></small>
+      <button type="button" class="ghost" data-logout>تسجيل الخروج</button>
+    </div>
+  </aside>
+  <section id="page" aria-live="polite"></section>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
+<script src="admin.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
